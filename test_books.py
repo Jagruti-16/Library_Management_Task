@@ -4,7 +4,7 @@ from models import Book
 
 class TestBooks(unittest.TestCase):
     def setUp(self):
-        # Set up test environment
+        
         app.config["TESTING"] = True
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         self.client = app.test_client()
@@ -12,7 +12,7 @@ class TestBooks(unittest.TestCase):
             db.create_all()
 
     def tearDown(self):
-        # Clean up after tests
+        
         with app.app_context():
             db.session.remove()
             db.drop_all()
@@ -33,29 +33,26 @@ class TestBooks(unittest.TestCase):
 
     def test_get_books(self):
         with app.app_context():
-        # Add multiple books to test pagination
             books = [
             Book(title=f"Book {i}", author=f"Author {i}", year=2000 + i, copies=i) for i in range(1, 6)
             ]
             db.session.add_all(books)
             db.session.commit()
-
-        # Fetch the first page with 2 books per page
         response = self.client.get("/books?page=1&per_page=2")
         self.assertEqual(response.status_code, 200)
 
         data = response.get_json()
-        # Verify the structure of the response
+        
         self.assertIn("books", data)
         self.assertIn("pagination", data)
 
-        # Verify the content of the response
+
         self.assertEqual(len(data["books"]), 2)
         self.assertEqual(data["pagination"]["total_items"], 5)
         self.assertEqual(data["pagination"]["current_page"], 1)
         self.assertEqual(data["pagination"]["per_page"], 2)
 
-        # Verify the book titles in the response
+       
         self.assertEqual(data["books"][0]["title"], "Book 1")
         self.assertEqual(data["books"][1]["title"], "Book 2")
 

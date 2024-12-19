@@ -2,9 +2,10 @@ Library Management System
 This is a Flask-based API for managing books and members in a library system. The API provides endpoints for CRUD operations on books and members, with support for pagination.
 
 How to Run the Project
+
 Clone the Repository:
 
-git clone https://github.com/Jagruti-16/Library_Management_Task.git
+git clone https://github.com/Jagruti-16/Library_Management_Task.git 
 cd Library_Management_Task
 
 Set up a Virtual Environment:
