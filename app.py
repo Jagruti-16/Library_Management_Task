@@ -32,8 +32,25 @@ def get_book(book_id):
 
 @app.route("/books", methods=["GET"])
 def get_books():
-    books = Book.query.all()
-    return jsonify([book.to_dict() for book in books]), 200
+    page = request.args.get("page", default=1, type=int) 
+    per_page = request.args.get("per_page", default=10, type=int)
+
+   
+    books_query = Book.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    
+    books = [book.to_dict() for book in books_query.items]
+    response = {
+        "books": books,
+        "pagination": {
+            "total_items": books_query.total,
+            "total_pages": books_query.pages,
+            "current_page": books_query.page,
+            "per_page": books_query.per_page,
+        },
+    }
+    return jsonify(response), 200
+
 
 
 @app.route("/books/<int:book_id>", methods=["PUT"])
@@ -75,8 +92,23 @@ def create_member():
 
 @app.route("/members", methods=["GET"])
 def get_members():
-    members = Member.query.all()
-    return jsonify([member.to_dict() for member in members]), 200
+    page = request.args.get("page", default=1, type=int) 
+    per_page = request.args.get("per_page", default=10, type=int) 
+
+    
+    members_query = Member.query.paginate(page=page, per_page=per_page, error_out=False)
+
+    members = [member.to_dict() for member in members_query.items]
+    response = {
+        "members": members,
+        "pagination": {
+            "total_items": members_query.total,
+            "total_pages": members_query.pages,
+            "current_page": members_query.page,
+            "per_page": members_query.per_page,
+        },
+    }
+    return jsonify(response), 200
 
 
 @app.route("/members/<int:member_id>", methods=["GET"])

@@ -30,15 +30,32 @@ class TestMembers(unittest.TestCase):
 
     def test_get_members(self):
         with app.app_context():
-            member = Member(name="Jane Doe", email="janedoe@example.com")
-            db.session.add(member)
+            # Add multiple members to test pagination
+            members = [
+            Member(name=f"Member {i}", email=f"member{i}@example.com") for i in range(1, 6)
+            ]
+            db.session.add_all(members)
             db.session.commit()
 
-        response = self.client.get("/members")
+        # Fetch the first page with 2 members per page
+        response = self.client.get("/members?page=1&per_page=2")
         self.assertEqual(response.status_code, 200)
+
         data = response.get_json()
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data[0]["name"], "Jane Doe")
+        # Verify the structure of the response
+        self.assertIn("members", data)
+        self.assertIn("pagination", data)
+
+        # Verify the content of the response
+        self.assertEqual(len(data["members"]), 2)
+        self.assertEqual(data["pagination"]["total_items"], 5)
+        self.assertEqual(data["pagination"]["current_page"], 1)
+        self.assertEqual(data["pagination"]["per_page"], 2)
+
+        # Verify the member names in the response
+        self.assertEqual(data["members"][0]["name"], "Member 1")
+        self.assertEqual(data["members"][1]["name"], "Member 2")
+
 
     def test_update_member(self):
         with app.app_context():

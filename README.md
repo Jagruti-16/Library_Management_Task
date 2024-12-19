@@ -1,51 +1,44 @@
 Library Management System
-A Flask-based Library Management System to manage books and members with features like adding, retrieving, updating, and deleting books and members.
-
-Features
-Add, update, delete, and retrieve books.
-Add, update, delete, and retrieve members.
+This is a Flask-based API for managing books and members in a library system. The API provides endpoints for CRUD operations on books and members, with support for pagination.
 
 How to Run the Project
-Prerequisites
-Python 3.x
-Flask
-SQLAlchemy
-Installation
-Clone the repository:
+Clone the Repository:
 
-git clone https://github.com/your-username/library-management.git
-Navigate to the project folder:
+git clone https://github.com/Jagruti-16/Library_Management_Task.git
+cd Library_Management_Task
 
-cd library-management
-Create a virtual environment:
+Set up a Virtual Environment:
 
-python -m venv venv
-Activate the virtual environment:
+python -m venv venv 
+use venv\Scripts\activate
 
-On Windows:
-
-venv\Scripts\activate
-On macOS/Linux:
-
-
-source venv/bin/activate
-Install dependencies:
+Install Dependencies:
 
 pip install -r requirements.txt
-Set the Flask environment variables and run the app:
 
-set FLASK_APP=app.py  # For Windows
-set FLASK_ENV=development  # For Windows
-flask run
-Or on macOS/Linux:
+python app.py
+Test the Application
+Run unit tests to ensure everything works correctly:
 
-export FLASK_APP=app.py
-export FLASK_ENV=development
-flask run
-Access the Application
-Open your browser and visit:
-http://127.0.0.1:5000
-Design Choices
-Flask was chosen for its simplicity and flexibility in building APIs.
-SQLite was used as the database for simplicity, ideal for small-scale projects.
-SQLAlchemy ORM is used for database interaction.
+python -m unittest discover
+
+
+Design Choices Made
+Framework: Used Flask for its simplicity and flexibility in building RESTful APIs.
+Database: SQLite is chosen for simplicity during development. SQLAlchemy ORM is used for interacting with the database.
+Pagination: Added pagination to the GET endpoints for books and members to handle large datasets efficiently.
+Query parameters page and per_page allow clients to control pagination.
+Pagination metadata is included in the response for better clarity.
+Error Handling: Ensured proper error messages are returned for missing or invalid resources.
+Unit Testing: Comprehensive tests using unittest to validate API functionality.
+Assumptions and Limitations
+Assumptions
+Each book's title and author combination is unique in the library.
+Members are identified uniquely by their email addresses.
+Pagination defaults:
+If page or per_page is not provided, defaults are applied (page=1, per_page=10).
+JSON format is used for all request payloads and responses.
+Limitations
+Database: SQLite is not ideal for production environments. Replace with a more robust database (e.g., PostgreSQL) for deployment.
+Authentication: No authentication or authorization is implemented, making it insecure for public use.
+Pagination Defaults: The API does not validate extremely large per_page values, which could affect performance.

@@ -33,14 +33,31 @@ class TestBooks(unittest.TestCase):
 
     def test_get_books(self):
         with app.app_context():
-            book = Book(title="Book B", author="Author B", year=2021, copies=5)
-            db.session.add(book)
+        # Add multiple books to test pagination
+            books = [
+            Book(title=f"Book {i}", author=f"Author {i}", year=2000 + i, copies=i) for i in range(1, 6)
+            ]
+            db.session.add_all(books)
             db.session.commit()
 
-        response = self.client.get("/books")
+        # Fetch the first page with 2 books per page
+        response = self.client.get("/books?page=1&per_page=2")
         self.assertEqual(response.status_code, 200)
+
         data = response.get_json()
-        self.assertEqual(len(data), 1)
+        # Verify the structure of the response
+        self.assertIn("books", data)
+        self.assertIn("pagination", data)
+
+        # Verify the content of the response
+        self.assertEqual(len(data["books"]), 2)
+        self.assertEqual(data["pagination"]["total_items"], 5)
+        self.assertEqual(data["pagination"]["current_page"], 1)
+        self.assertEqual(data["pagination"]["per_page"], 2)
+
+        # Verify the book titles in the response
+        self.assertEqual(data["books"][0]["title"], "Book 1")
+        self.assertEqual(data["books"][1]["title"], "Book 2")
 
     def test_update_book(self):
         with app.app_context():
